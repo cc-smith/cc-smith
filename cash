@@ -1,0 +1,37 @@
+#include <cs50.h>
+#include <stdio.h>
+#include <math.h>
+
+void hash(int n);
+void space(int n);
+
+
+int main(void)
+{
+float dollars;
+int quarters;
+int dimes;
+int nickels;
+int pennies;
+int change;
+
+//int changeq;
+
+do
+	{
+	dollars = get_float("Change owed: ");
+	}
+while (dollars <= 0);
+	int cents = round(dollars * 100);
+	//printf("%i\n", cents);
+
+quarters = cents / 25;
+dimes = ((cents - (quarters * 25)) / 10);
+nickels = (cents - (quarters * 25) - (dimes * 10)) / 5;
+pennies = (cents - (quarters * 25) - (dimes * 10) - (nickels *5));
+
+change = quarters + dimes + nickels + pennies;
+
+printf("%i\n", change);
+
+}

@@ -1,0 +1,71 @@
+#include <cs50.h>
+#include <stdio.h>
+
+int main(void)
+{
+long n, Digit, CheckSum, CheckSum2, CheckSum3, Multiply, Digit2, Multiply1, Multiply2, Multiply3;
+CheckSum = 0;
+CheckSum2 = 0;
+Multiply3 = 0;
+
+do
+{
+	n = get_long("Number: ");
+}
+while (n <= 0);
+
+//To find sum of every other digit * 2
+for (long i = 100; i <= (n * 100); i = i * 100)
+{
+	Digit = n % i;
+	Digit2 = Digit / (i / 10);
+	Multiply = Digit2 * 2;
+	if (Multiply >= 10)
+	{
+	Multiply2 = Multiply / 10;
+	Multiply3 = Multiply % 10;
+	Multiply = 0;
+	}
+	else
+	{
+	Multiply2 = 0;
+	Multiply3 = 0;
+	}
+    CheckSum = Multiply + Multiply2 + Multiply3 + CheckSum;
+}
+
+//To find sum of every digit not used
+for (long j = 10; j <= (n * 10); j = j * 100)
+{
+	Digit = n % j;
+	Digit2 = Digit / (j / 10);
+	CheckSum2 = Digit2 + CheckSum2;
+}
+CheckSum3 = CheckSum + CheckSum2;
+
+//Validate CheckSum
+if (CheckSum3 % 10 != 0)
+{
+	printf("INVALID\n");
+}
+
+
+//If CheckSum correct, check if Amex Card
+else if ((n / 10000000000000) == 34 || (n / 10000000000000) == 37)
+{
+	printf("AMEX\n");
+}
+//Check if MasterCard
+else if ((n / 100000000000000) >= 51 && (n / 100000000000000) <= 55)
+{
+	printf("MASTERCARD\n");
+}
+//Check if Visa
+else if ((n / 1000000000000000) == 4 || (n / 1000000000000) == 4)
+{
+	printf("VISA\n");
+}
+else
+	printf("INVALID\n");
+}
+
