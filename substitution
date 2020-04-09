@@ -1,0 +1,94 @@
+#include <cs50.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <math.h>
+
+// Prompts user for cipher key and plain text, returns cipher text
+int main(int argc, string argv[])
+{
+
+// Check that user enters key in command line
+	if (argc != 2)
+	{
+		printf("Usage: ./suubstitution key\n");
+		return 1;
+	}
+
+// Check that user enters 26 letter key
+	if (strlen(argv[1]) != 26)
+	{
+		printf("Key must contain 26 characters.\n");
+		return 1;
+	}
+
+// Check that every character in command line (key) is a letter
+	for (int i = 0, n = strlen(argv[1]); i < n; i++)
+	if (isalpha(argv[1][i]) == 0)
+	{
+		printf("Usage: ./substitution key\n");
+		return 1;
+	}
+
+// Check that no letter is repeated
+	int count = 0;
+	for (int i = 0, n = strlen(argv[1]); i < n; i++)
+	{
+		for (int j = i + 1; argv[1][j] != '\0'; j++)
+		{
+			if (argv[1][i] == argv[1][j] || abs(argv[1][i] - argv[1][j]) == 32)
+			{
+				count = count + 1;
+			}
+				if (count >= 1)
+				{
+					printf("Key must not contain repeated characters.\n");
+					return 1;
+				}
+		}
+	}
+	
+// Prompt user for plain text
+	string s = get_string("plaintext: ");
+	printf("ciphertext: ");
+
+// Loop throught each letter in plaintext string and covert to cipher text, maintain upper/lower case
+	for (int i = 0, n = strlen(s); i < n; i++)
+		{
+			if (isalpha(s[i]) == 0)
+			{
+				printf("%c",s[i]);
+			}
+			else if (isupper(s[i]) > 0)
+			{
+			int PText = (s[i] - 65);
+			char CText = argv[1][PText];
+				if (isupper(CText) > 0)
+				{
+					printf("%c", CText);
+				}
+				else
+				{
+					printf("%c", CText - 32);
+				}
+			}
+			else if (islower(s[i]) > 0)
+			{
+			int PText = (s[i] - 97);
+			char CText = argv[1][PText];
+				if (islower(CText) > 0)
+				{
+					printf("%c", CText);
+				}
+				else
+				{
+					printf("%c", CText + 32);
+				}
+			}
+		}
+	printf("\n");
+	return 0;
+}
+
+
