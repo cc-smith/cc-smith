@@ -1,0 +1,66 @@
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[])
+{
+// Check usage
+    if (argc != 2)
+    {
+        printf("Usage: ./recover image\n");
+        return 1;
+    }
+
+// Check for correct user input and open memory card
+    FILE *f = fopen(argv[1], "r");
+    if (!f)
+    {
+        return 1;
+    }
+
+// Read card into buffer, in 512 byte chunks
+    unsigned char buffer[512];
+    int count = 0;
+
+    char* filename;
+    filename = malloc(sizeof(int) * 3);
+    FILE *img;
+
+    while (fread(buffer, sizeof(char), 512, f) == 512)
+    {
+// Check if chunk is start of a new JPEG
+        if (buffer[0] == 0xff && buffer[1] == 0xd8 && buffer[2] == 0xff && (buffer[3] & 0xf0) == 0xe0)
+        {
+// If first JPEG, create file for JPEG, and start writing to file
+            if (access("000.jpg", F_OK) == -1)
+            {
+                sprintf(filename, "%03i.jpg", 0);
+                img = fopen(filename, "w");
+                fwrite(buffer, sizeof(char), 512, img);
+                //printf("%i", 2);
+            }
+            else
+            {
+                count++;
+                sprintf(filename, "%03i.jpg", count);
+                img = fopen(filename, "w");
+                fwrite(buffer, sizeof(char), 512, img);
+            }
+        }
+// If chunk is not start of a new JPEG, continue writing
+        else
+        {
+// If already found a JPEG and currently writing to it, keep writing to it
+            if (img != NULL)
+            {
+                fwrite(buffer, sizeof(char), 512, img);
+            }
+        }
+    }
+// Close any remaining files
+    fcloseall();
+// free memory
+    free(img);
+    free(filename);
+}
