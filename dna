@@ -1,0 +1,58 @@
+import sys
+import csv
+
+# Check for command line argument, print error message
+if len(sys.argv) != 3:
+    print("Invalid entry!")
+    exit(1)
+
+# Open DNA database and read into memory
+f1 = open(sys.argv[1], 'r')
+reader = csv.reader(f1)
+
+# Store possible STR sequences from DNA database in STR_types
+STR_types = next(reader)
+
+# Open DNA sequence and read into memory
+f2 = open(sys.argv[2], 'r+')
+dna = f2.read()
+
+# For each STR in DNA seq, compute longest run of consc. repeats
+STRcount = []
+for l in STR_types[1:]:
+    count = []
+    c = 1
+    # Find first instance of STR type
+    index = dna.find(l)
+    # Iterate through DNA sequence, keeping track of consecutive STRs and store in count list
+    for i in dna[::len(l)]:
+        while index < len(dna):
+            if dna[index + len(l): index + (2 * len(l))] == l:
+                c = c + 1
+                index = index + len(l)
+            else:
+                if c > 0:
+                    count.append(c)
+                c = 0
+                index = index + 1
+    # Get largest value of STR count and add to STRcount list
+    STRcount.append(max(count))
+
+# Convert STRcount integers to strings
+STRcount = list(map(str, STRcount))
+
+# Put DNA database into a list
+data = list(reader)
+
+# Compare STRcount list to DNA database list, look for match
+for i in range(len(data)):
+    if data[i][1:len(data) + 1] == STRcount:
+        print(data[i][0])
+        break
+    else:
+        if i == len(data) - 1:
+            print("No match")
+
+# Close files
+f1.close()
+f2.close()
